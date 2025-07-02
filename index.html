@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Aptech Exam Practice</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    button { margin-top: 0.5rem; display: block; width: 100%; padding: 0.5rem; }
+    .question { font-weight: bold; margin-bottom: 1rem; }
+    .feedback { margin-top: 1rem; font-weight: bold; }
+    .review-item { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; }
+    .wrong { color: red; }
+    .correct { color: green; }
+  </style>
+</head>
+<body>
+  <h2>📘 Aptech Exam Practice (HTML Version)</h2>
+  <div id="instructions">
+  <h3>How to Use:</h3>
+  <ol>
+    <li>Click the "Choose File" button below and upload your <code>.htm</code> past exam questions file.</li>
+    <li>Once loaded, questions will appear one by one.</li>
+    <li>You’ll get immediate feedback and the app will move to the next question.</li>
+    <li>At the end, your score will be shown along with a full review of all your answers.</li>
+  </ol>
+</div>
+  <input type="file" id="fileInput" accept=".htm,.html"><br><br>
+  <div id="quiz"></div>
+  <div id="review"></div>
+  <script>
+    let questions = [];
+    let current = 0;
+    let score = 0;
+    let reviewList = [];
+
+    document.getElementById('fileInput').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('instructions').style.display = 'none';
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(e.target.result, 'text/html');
+        const trs = [...doc.querySelectorAll('tr')];
+
+        let q = null, opts = [], correctIndex = -1;
+        for (let tr of trs) {
+          const text = tr.textContent.trim();
+          const lis = tr.querySelectorAll('li');
+
+          if (/^\d+\./.test(text)) {
+            if (q) questions.push({ question: q, options: opts, answer: correctIndex });
+            q = text.split('(')[0].trim();
+            opts = [];
+            correctIndex = -1;
+          }
+
+          lis.forEach(li => {
+            opts.push(li.textContent.trim());
+            if (li.getAttribute('style')?.includes('color:red')) {
+              correctIndex = opts.length - 1;
+            }
+          });
+        }
+        if (q) questions.push({ question: q, options: opts, answer: correctIndex });
+
+        showQuestion();
+      };
+      reader.readAsText(file);
+    });
+
+    function showQuestion() {
+      const quizDiv = document.getElementById('quiz');
+      quizDiv.innerHTML = '';
+
+      if (current >= questions.length) {
+        quizDiv.innerHTML = `<h3>✅ Done! You scored ${score}/${questions.length}</h3>`;
+        showReview();
+        return;
+      }
+
+      const q = questions[current];
+      const qElem = document.createElement('div');
+      qElem.className = 'question';
+      qElem.textContent = q.question;
+      quizDiv.appendChild(qElem);
+
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => {
+          const feedback = document.createElement('div');
+          feedback.className = 'feedback';
+          const isCorrect = i === q.answer;
+
+          if (isCorrect) {
+            feedback.textContent = '✅ Correct!';
+            score++;
+          } else {
+            feedback.textContent = `❌ Wrong! Correct answer: ${q.options[q.answer]}`;
+          }
+
+          reviewList.push({
+            question: q.question,
+            options: q.options,
+            correct: q.answer,
+            selected: i,
+            correctText: isCorrect
+          });
+
+          quizDiv.appendChild(feedback);
+          setTimeout(() => {
+            current++;
+            showQuestion();
+          }, 1500);
+        };
+        quizDiv.appendChild(btn);
+      });
+    }
+
+    function showReview() {
+      const reviewDiv = document.getElementById('review');
+      reviewDiv.innerHTML = '<h3>📄 Review</h3>';
+      reviewList.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'review-item';
+        const status = item.correctText ? '<span class="correct">Correct</span>' : `<span class="wrong">Wrong</span>`;
+        div.innerHTML = `
+          <div><strong>${item.question}</strong></div>
+          <div>Your answer: ${item.options[item.selected]}</div>
+          <div>Correct answer: ${item.options[item.correct]}</div>
+          <div>Status: ${status}</div>
+        `;
+        reviewDiv.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
