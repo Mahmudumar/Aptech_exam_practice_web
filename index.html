@@ -1,44 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Aptech Exam Practice</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
-    button { margin-top: 0.5rem; display: block; width: 100%; padding: 0.5rem; }
-    .question { font-weight: bold; margin-bottom: 1rem; }
-    .feedback { margin-top: 1rem; font-weight: bold; }
-    .review-item { margin-top: 1rem; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; }
-    .wrong { color: red; }
-    .correct { color: green; }
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+    code{
+      background-color: #eee;
+      border-radius: 3px;
+      padding: 4px;
+    }
+
+    button {
+      margin-top: 0.5rem;
+      display: block;
+      width: 100%;
+      padding: 0.5rem;
+    }
+
+    .question {
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .feedback {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .review-item {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .wrong {
+      color: red;
+    }
+
+    .correct {
+      color: green;
+    }
+
+    .disclaimer {
+      color: red;
+      font-size: 12px;
+    }
   </style>
 </head>
+
 <body>
-  <h2>📘 Aptech Exam Practice (HTML Version)</h2>
+  <h2>📘 Aptech Exam Practice</h2>
+  <div class="disclaimer">Disclaimer: Some questions might not be answerable, be sure to check it directly in your <code>.htm</code></div>
+  
   <div id="instructions">
-  <h3>How to Use:</h3>
-  <ol>
-    <li>Click the "Choose File" button below and upload your <code>.htm</code> past exam questions file.</li>
-    <li>Once loaded, questions will appear one by one.</li>
-    <li>You’ll get immediate feedback and the app will move to the next question.</li>
-    <li>At the end, your score will be shown along with a full review of all your answers.</li>
-  </ol>
-</div>
+    <h3>How to Use:</h3>
+    <ol>
+      <li>Click the "Choose File" button below and upload your <code>.htm</code> past exam questions file.</li>
+      <li>Once loaded, questions will appear one by one.</li>
+      <li>You’ll get immediate feedback and the app will move to the next question.</li>
+      <li>At the end, your score will be shown along with a full review of all your answers.</li>
+      <li>*If you want to retake the quiz, just refresh the page and retake it</li>
+    </ol>
+  </div>
+
   <input type="file" id="fileInput" accept=".htm,.html"><br><br>
   <div id="quiz"></div>
   <div id="review"></div>
+
   <script>
     let questions = [];
     let current = 0;
     let score = 0;
     let reviewList = [];
 
-    document.getElementById('fileInput').addEventListener('change', function(event) {
+    document.getElementById('fileInput').addEventListener('change', function (event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (e) {
         document.getElementById('instructions').style.display = 'none';
         const parser = new DOMParser();
         const doc = parser.parseFromString(e.target.result, 'text/html');
@@ -137,4 +185,5 @@
     }
   </script>
 </body>
+
 </html>
