@@ -1,6 +1,6 @@
 # 🎓 Aptech Exam Practice – Web Version
 
-This is a simple browser-based app that lets you upload Aptech `.htm` exam files and take the test interactively.
+This is a simple browser-based app that lets you upload Aptech `.htm` past exam questions' files and take the test interactively.
 
 ## 🚀 How to Use
 
